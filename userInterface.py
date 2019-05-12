@@ -37,13 +37,13 @@ class Display(object):
         #Create board of snake and ladder
         canvas_width = 1200
         canvas_height = 700
-        self.color = ["#FFF", "#F00", "#0F0", "#00F", "#FF0", "#0FF"]
+        self.color = ["#FFF","#0F0", "#FF0", "#0FF"]
         self.canvas = Canvas(master, width = canvas_width, height = canvas_height, bg = "brown")
         self.canvas.grid(padx=0, pady=0)
         self.canvas.create_image(500,250,anchor=CENTER, image = img)
 
-        self.x = 65
-        self.y = 510
+        self.x = 55
+        self.y = 410
         self.m = []
         self.num_player = "Players"
         self.player = []
@@ -74,13 +74,13 @@ class Display(object):
         else:
             #Dice
             #Screen
-            self.canvas.create_rectangle(810, 150, 760, 100, fill='white', outline='black')
-            self.canvas.pack(fill=BOTH, expand=1)
+            # self.canvas.create_rectangle(810, 150, 1160, 100, fill='white', outline='black')
+            # self.canvas.pack(fill=BOTH, expand=1)
             #Button
             self.diceRoll = Button(self.canvas, text="Roll",background='white',
                                    command = self.gamePlay, font=("Helvetica"))
             self.num_player = int(self.num_player)
-            self.diceRoll.place(x=770, y=165)
+            self.diceRoll.place(x=1100, y=165)
             self.create_peice()
             self.startGame.place(x=-30, y=-30)
 
@@ -96,7 +96,7 @@ class Display(object):
         dice_value = Label(self.canvas, text=str(move),
                            background='white', font=("Helvetica", 25))
         dice_value.pack()
-        dice_value.place(x=775, y=105)
+        dice_value.place(x=1105, y=105)
         
         
         self.x, self.y = position[0], position[1]
