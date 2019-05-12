@@ -112,12 +112,7 @@ class Display(object):
         return [self.x, self.y]
         
     def peices(self, move, turn):
-        #Starting value of and x and y should be 100 and 100
-        #In create_circle initial value of x and y should be 100 and 550
-        #To reach to the last block x should be 5*x and y should be 4*y
-        #X should be added to value and Y should be subtracted
-        # 5x100=600 and 4*100=480
-        #m is the constant that tells which side to move i.e. left to right or right to left
+       #gerak pion
         for i in range(move,0,-1):
             self.x = self.x+100*self.m[turn]
 
