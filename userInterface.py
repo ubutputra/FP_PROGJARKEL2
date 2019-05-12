@@ -52,6 +52,11 @@ class Display(object):
         self.block=[]
         self.move = 1
         self.turn = 0
+        self.gambar=[]
+        self.gambar.append(PhotoImage( file = "image1.gif"))
+        self.gambar.append(PhotoImage( file = "image2.gif"))
+        self.gambar.append(PhotoImage( file = "image3.gif"))
+        self.gambar.append(PhotoImage( file = "image4.gif"))
         
         
         #Drop Menu
@@ -137,7 +142,8 @@ class Display(object):
 
             # Code For the Animation of piece
             self.canvas.delete(self.player[turn])
-            self.player[turn] = self.canvas.create_circle(self.x, self.y, 15, fill=self.color[turn], outline=self.color[turn])
+            #self.player[turn] = self.canvas.create_circle(self.x, self.y, 15, fill=self.color[turn], outline=self.color[turn])
+            self.player[turn]=self.canvas.create_image(self.x,self.y,anchor=CENTER, image = self.gambar[turn])
             self.canvas.update()
             time.sleep(0.25)
 
@@ -151,7 +157,8 @@ class Display(object):
             self.m[turn] = 1
         print(self.x,self.y, self.block[turn])
         self.canvas.delete(self.player[turn])
-        self.player[turn] = self.canvas.create_circle(self.x, self.y, 15, fill=self.color[turn], outline="")
+        #self.player[turn] = self.canvas.create_circle(self.x, self.y, 15, fill=self.color[turn], outline="")
+        self.player[turn]=self.canvas.create_image(self.x,self.y,anchor=CENTER, image = self.gambar[turn])
 
 
     def create_peice(self):
@@ -159,7 +166,8 @@ class Display(object):
             if(i==3):
                 self.x += 35
                 self.y -= 105
-            self.player.append(self.canvas.create_circle(self.x, self.y, 15, fill=self.color[i], outline=""))
+            #self.player.append(self.canvas.create_circle(self.x, self.y, 15, fill=self.color[i], outline=""))
+            self.player.append(self.canvas.create_image(self.x,self.y,anchor=CENTER, image = self.gambar[i]))
             self.position.append([self.x, self.y])
             self.m.append(1)
             self.block.append(1)
