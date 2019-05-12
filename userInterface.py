@@ -122,22 +122,22 @@ class Display(object):
         for i in range(move,0,-1):
             self.x = self.x+100*self.m[turn]
 
-            if(self.x>955 and turn < 3):
+            if(self.x>955 and turn < 4):
                 self.y = self.y - 100
                 self.x = 955
                 self.m[turn] = -1
                 print "pertama"
-            elif(self.x>1000 and turn >=3):
+            elif(self.x>1000 and turn >=4):
                 self.y = self.y - 100
                 self.x = 1000
                 self.m[turn] = -1
                 print "kedua"
-            if(self.x<55 and turn < 3):
+            if(self.x<55 and turn < 4):
                 self.x = 55
                 self.y -= 100
                 self.m[turn] = 1
                 print "ketiga"
-            elif(self.x<100 and turn >=3):
+            elif(self.x<100 and turn >=4):
                 self.x = 100
                 self.y -= 100
                 self.m[turn] = 1
@@ -173,15 +173,12 @@ class Display(object):
 
     def create_peice(self):
         for i in range(int(self.num_player)):
-            if(i==3):
-                self.x += 35
-                self.y -= 105
             #self.player.append(self.canvas.create_circle(self.x, self.y, 15, fill=self.color[i], outline=""))
             self.player.append(self.canvas.create_image(self.x,self.y,anchor=CENTER, image = self.gambar[i]))
             self.position.append([self.x, self.y])
             self.m.append(1)
             self.block.append(1)
-            self.y += 35
+            self.y += 20
 
 
     def gamePlay(self):
