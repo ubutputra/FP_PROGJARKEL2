@@ -11,22 +11,22 @@ class MatchPosition():
     def find_snake_or_ladder(self, block, turn, position):
         x = 35*(turn>=3)
         y = (turn%3)*35
-        if(block == 3):
-           return 305+x, 150+y, 22
-        elif(block == 5):
-            return 545+x, 390+y, 8
-        elif(block == 11):
-            return 185+x, 30+y, 26
-        elif(block == 20):
-            return 545+x, 30+y, 29
-        elif(block == 17):
-           return 425+x, 510+y, 4
-        elif(block == 19):
-           return 665+x, 390+y, 7
-        elif(block == 21):
-           return 425+x, 390+y, 9
+        if(block == 17):
+           return 455+x, 125+y, 36
         elif(block == 27):
-           return 65+x, 510+y, 1
+            return 655+x, 25+y, 47
+        elif(block == 44):
+            return 265+x, 325+y, 18
+        elif(block == 33):
+            return 865+x, 325+y, 12
+        # elif(block == 17):
+        #    return 425+x, 510+y, 4
+        # elif(block == 19):
+        #    return 665+x, 390+y, 7
+        # elif(block == 21):
+        #    return 425+x, 390+y, 9
+        # elif(block == 27):
+        #    return 65+x, 510+y, 1
         else:
             return position[0], position[1], block
         
@@ -57,7 +57,7 @@ class Display(object):
         self.gambar.append(PhotoImage( file = "image2.gif"))
         self.gambar.append(PhotoImage( file = "image3.gif"))
         self.gambar.append(PhotoImage( file = "image4.gif"))
-        
+        self.act=0
         
         #Drop Menu
         OPTIONS = ["Players", "2", "3", "4"]
@@ -96,6 +96,7 @@ class Display(object):
 
     def diceMove(self, position, turn):
         move = dice()
+
         #move = 1
         #Print Dice Value to screen
         dice_value = Label(self.canvas, text=str(move),
@@ -105,7 +106,7 @@ class Display(object):
         
         
         self.x, self.y = position[0], position[1]
-        if(move+self.block[turn] > 30):
+        if(move+self.block[turn] > 50):
             return [self.x, self.y]
         
         self.move = move
@@ -121,24 +122,29 @@ class Display(object):
         for i in range(move,0,-1):
             self.x = self.x+100*self.m[turn]
 
-            if(self.x>665 and turn < 3):
+            if(self.x>955 and turn < 3):
                 self.y = self.y - 100
-                self.x = 665
+                self.x = 955
                 self.m[turn] = -1
-            elif(self.x>700 and turn >=3):
+                print "pertama"
+            elif(self.x>1000 and turn >=3):
                 self.y = self.y - 100
-                self.x = 700
+                self.x = 1000
                 self.m[turn] = -1
-            if(self.x<65 and turn < 3):
-                self.x = 65
+                print "kedua"
+            if(self.x<55 and turn < 3):
+                self.x = 55
                 self.y -= 100
                 self.m[turn] = 1
+                print "ketiga"
             elif(self.x<100 and turn >=3):
                 self.x = 100
                 self.y -= 100
-                self.m[turn] = 1 
-            if(self.y<30):
-                self.y=30
+                self.m[turn] = 1
+                print "keempat" 
+            if(self.y<55):
+                self.y=55
+                print "last"
 
             # Code For the Animation of piece
             self.canvas.delete(self.player[turn])
@@ -149,12 +155,16 @@ class Display(object):
 
             
         print(self.x, self.y, self.block[turn])
+        if self.block[turn]==44:
+            self.m[turn]= -1
         self.x, self.y, self.block[turn] = MatchPosition().find_snake_or_ladder(self.block[turn], turn, [self.x, self.y])
         
-        if(any(self.y == ai for ai in [390, 425, 460, 150, 185, 220])):
-            self.m[turn] = -1
-        else:
-            self.m[turn] = 1
+        # if(any(self.y == ai for ai in [390, 425, 460, 150, 185, 220])):
+        #     print "wat "+str(ai)
+        #     self.m[turn] = -1
+        # else:
+        #     self.m[turn] = 1
+        #     print "nani"
         print(self.x,self.y, self.block[turn])
         self.canvas.delete(self.player[turn])
         #self.player[turn] = self.canvas.create_circle(self.x, self.y, 15, fill=self.color[turn], outline="")
@@ -182,7 +192,7 @@ class Display(object):
             self.i += 1
             self.turn = turn
         self.position[turn] = self.diceMove(self.position[turn], turn)
-        if(self.block[self.turn] >= 30):
+        if(self.block[self.turn] >= 50):
             self.diceRoll.place(x=-30, y=-30)
             print("Won", self.turn+1)
             top = Toplevel()
