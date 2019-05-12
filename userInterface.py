@@ -187,12 +187,9 @@ class Display(object):
 
 
     def gamePlay(self):
-        if(self.move == 6):
-            turn = self.turn
-        else:
-            turn = self.i%self.num_player
-            self.i += 1
-            self.turn = turn
+        turn = self.i%self.num_player
+        self.i += 1
+        self.turn = turn
         self.position[turn] = self.diceMove(self.position[turn], turn)
         if(self.block[self.turn] >= 50):
             self.diceRoll.place(x=-30, y=-30)
