@@ -104,6 +104,11 @@ class Display(object):
         dice_value.pack()
         dice_value.place(x=1105, y=105)
         
+        turn_info = 'Player ' + str(turn+1)
+        turn_value = Label(self.canvas, text=turn_info,
+                           background='white', font=("Helvetica", 20))
+        turn_value.pack()
+        turn_value.place(x=1065, y=65)
         
         self.x, self.y = position[0], position[1]
         if(move+self.block[turn] > 50):
