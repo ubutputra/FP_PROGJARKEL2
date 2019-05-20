@@ -31,17 +31,35 @@ roll = 0
 keterangan=[turnnow,jumlah_player,roll,posisi_1,posisi_2,posisi_3,posisi_4]
 keterangandump=pickle.dumps(keterangan)
 
+#state A -> game belum mulai, state B -> game sudah mulai
+state ="A"
 
 def clientthread(conn,addr):
 	while True:
+		global state
+		global turnnow
+		global jumlah_player
+		global roll
+		global posisi_1
+		global posisi_2
+		global posisi_3
+		global posisi_4
+		global keterangan
+		global keterangandump
 		try:
 			message=conn.recv(2048)
 			if message:
-				dapat=pickle.loads(message)
-				else:	
-					print "<" + addr[0] + "> " 
-					boarddump=pickle.dumps(board)
-					broadcast(boarddump,conn)
+				print message
+				if state == "A":
+					state = "B"
+					print "Game Mulai"
+				else:
+					roll=int(message)
+					turnnow+=1
+					posisi_1+=roll
+					keterangan=[turnnow,jumlah_player,roll,posisi_1,posisi_2,posisi_3,posisi_4]
+					keterangandump=pickle.dumps(keterangan)
+					broadcast(keterangandump,conn)
 			else:
 				remove(conn)
 		except:
