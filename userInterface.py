@@ -65,12 +65,12 @@ class Display(object):
         variable.set(OPTIONS[0]) # default value
         w = OptionMenu(self.canvas, variable, *OPTIONS, command=self.get_choice)
         w.pack()
-        w.place(x=1100, y=225)
+        w.place(x=200, y=525)
         w.config(font=('calibri',(10)),bg='white',width=5)
         
         #Start Game
         self.startGame = Button(self.canvas, text="Start", background='white', command = self.startGame, font=("Helvetica"))
-        self.startGame.place(x=1100, y=400)
+        self.startGame.place(x=200, y=575)
 
 
     def startGame(self):
@@ -85,7 +85,7 @@ class Display(object):
             self.diceRoll = Button(self.canvas, text="Roll",background='white',
                                    command = self.gamePlay, font=("Helvetica"))
             self.num_player = int(self.num_player)
-            self.diceRoll.place(x=1100, y=165)
+            self.diceRoll.place(x=200, y=560)
             self.create_peice()
             self.startGame.place(x=-30, y=-30)
 
@@ -102,13 +102,13 @@ class Display(object):
         dice_value = Label(self.canvas, text=str(move),
                            background='white', font=("Helvetica", 25))
         dice_value.pack()
-        dice_value.place(x=1105, y=105)
+        dice_value.place(x=205, y=605)
         
         turn_info = 'Player ' + str(turn+1)
         turn_value = Label(self.canvas, text=turn_info,
                            background='white', font=("Helvetica", 20))
         turn_value.pack()
-        turn_value.place(x=1065, y=65)
+        turn_value.place(x=265, y=585)
         
         self.x, self.y = position[0], position[1]
         if(move+self.block[turn] > 50):
