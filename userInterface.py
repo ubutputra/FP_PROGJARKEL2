@@ -1,9 +1,8 @@
+
 import random
 from Tkinter import *
 from diceMove import dice
 import time
-import socket
-import pickle
 
 def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
@@ -21,6 +20,10 @@ class MatchPosition():
             return 265+x, 325+y, 18
         elif(block == 33):
             return 865+x, 325+y, 12
+        elif(block == 38):
+            return 265+x, 325+y, 16
+        elif(block == 22):
+            return 65+x, 25+y, 41
         # elif(block == 17):
         #    return 425+x, 510+y, 4
         # elif(block == 19):
@@ -44,8 +47,6 @@ class Display(object):
         self.canvas.grid(padx=0, pady=0)
         self.canvas.create_image(500,250,anchor=CENTER, image = img)
 
-
-        #bahan-bahan
         self.x = 55
         self.y = 410
         self.m = []
@@ -56,66 +57,42 @@ class Display(object):
         self.block=[]
         self.move = 1
         self.turn = 0
-        self.identity_player = 0
         self.gambar=[]
         self.gambar.append(PhotoImage( file = "image1.gif"))
         self.gambar.append(PhotoImage( file = "image2.gif"))
         self.gambar.append(PhotoImage( file = "image3.gif"))
         self.gambar.append(PhotoImage( file = "image4.gif"))
+        self.act=0
         
-        #CONNECTION
-        self.server_address = ('127.0.0.1',8081)
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect(self.server_address)
-        self.identity_player = self.client_socket.recv(1024)
-        print "Player ke " + self.identity_player
-        self.identity_player = int(self.identity_player)
-        
-
         #Drop Menu
-        # OPTIONS = ["Players", "2", "3", "4"]
-        # variable = StringVar(master)
-        # variable.set(OPTIONS[0]) # default value
-        # w = OptionMenu(self.canvas, variable, *OPTIONS, command=self.get_choice)
-        # w.pack()
-        # w.place(x=200, y=525)
-        # w.config(font=('calibri',(10)),bg='white',width=5)
+        OPTIONS = ["Players", "2", "3", "4"]
+        variable = StringVar(master)
+        variable.set(OPTIONS[0]) # default value
+        w = OptionMenu(self.canvas, variable, *OPTIONS, command=self.get_choice)
+        w.pack()
+        w.place(x=200, y=525)
+        w.config(font=('calibri',(10)),bg='white',width=5)
         
         #Start Game
-        self.startGame = Button(self.canvas, text="Start Game", background='white', command = self.startGame, font=("Helvetica"))
+        self.startGame = Button(self.canvas, text="Start", background='white', command = self.startGame, font=("Helvetica"))
         self.startGame.place(x=200, y=575)
 
 
     def startGame(self):
-        self.diceRoll = Button(self.canvas, text="Roll",background='white', command = self.gamePlay, font=("Helvetica"))
-        # testing = dice()
-        # print "ROLL = " + str(testing)
-        self.client_socket.send("START")
-        #keterangan ->turn sekarang,jumlah player, roll turn sekarang, current player
-        self.begin = self.client_socket.recv(1024)
-        self.loadbegin= pickle.loads(self.begin)
-        #print self.loadbegin[0]
-        #print self.loadbegin[1]
-        self.i = int(self.loadbegin[0])
-        self.num_player = int(self.loadbegin[1])
-        check = self.i%self.num_player
-        print "CHECK = " + str(check)
-        self.create_peice()
-        self.startGame.place(x=-30, y=-30)
-        while((check+1)!=self.identity_player):
-            self.diceRoll.place(x=-30,y=-30)
-            self.begin = self.client_socket.recv(1024)
-            self.loadbegin= pickle.loads(self.begin)
-            self.i = self.loadbegin[0]
-            self.move = int(self.loadbegin[2])
-            print "MOVE = " + str(self.move)
-            print "MOVE = " + str(self.loadbegin[2])
-            check = self.i%self.num_player
-            turn = (self.i-1)%self.num_player
-            print "TURN = " +str(turn)
-            self.position[turn] = self.diceMove(self.position[turn], turn)
-        self.diceRoll.place(x=200, y=560)
-            
+        if(self.num_player == "Players"):
+            pass
+        else:
+            #Dice
+            #Screen
+            # self.canvas.create_rectangle(810, 150, 1160, 100, fill='white', outline='black')
+            # self.canvas.pack(fill=BOTH, expand=1)
+            #Button
+            self.diceRoll = Button(self.canvas, text="Roll",background='white',
+                                   command = self.gamePlay, font=("Helvetica"))
+            self.num_player = int(self.num_player)
+            self.diceRoll.place(x=200, y=560)
+            self.create_peice()
+            self.startGame.place(x=-30, y=-30)
 
 
     def get_choice(self, value):
@@ -123,11 +100,11 @@ class Display(object):
 
 
     def diceMove(self, position, turn):
-        # move = dice()
+        move = dice()
 
         #move = 1
         #Print Dice Value to screen
-        dice_value = Label(self.canvas, text=str(self.move),
+        dice_value = Label(self.canvas, text=str(move),
                            background='white', font=("Helvetica", 25))
         dice_value.pack()
         dice_value.place(x=205, y=605)
@@ -139,20 +116,20 @@ class Display(object):
         turn_value.place(x=265, y=585)
         
         self.x, self.y = position[0], position[1]
-        if(self.move+self.block[turn] > 50):
+        if(move+self.block[turn] > 50):
             return [self.x, self.y]
         
-        #self.move = move
-        self.block[turn] += self.move
+        self.move = move
+        self.block[turn] += move
         
         self.canvas.delete(self.player[turn])
-        self.peices(turn)
+        self.peices(move, turn)
 
         return [self.x, self.y]
         
-    def peices(self, turn):
+    def peices(self, move, turn):
        #gerak pion
-        for i in range(self.move,0,-1):
+        for i in range(move,0,-1):
             self.x = self.x+100*self.m[turn]
 
             if(self.x>955 and turn < 4):
@@ -215,17 +192,10 @@ class Display(object):
 
 
     def gamePlay(self):
-        #keterangan ->turn sekarang,jumlah player, roll turn sekarang, current player
-        self.client_socket.send(str(self.identity_player))
-        self.begin = self.client_socket.recv(1024)
-        self.loadbegin= pickle.loads(self.begin)
-        self.i = int(self.loadbegin[0])
-        self.move = int(self.loadbegin[2])
-        check = self.i%self.num_player
-        turn = (self.i-1)%self.num_player
+        turn = self.i%self.num_player
+        self.i += 1
+        self.turn = turn
         self.position[turn] = self.diceMove(self.position[turn], turn)
-        print "CHECK = " + str(check)
-        print "TURN = " + str(self.loadbegin[0])
         if(self.block[self.turn] >= 50):
             self.diceRoll.place(x=-30, y=-30)
             print("Won", self.turn+1)
@@ -237,18 +207,5 @@ class Display(object):
             msg.pack()
             button = Button(top, text="Dismiss", command=top.destroy)
             button.pack()
-        if(self.num_player!=1):
-            check=1000
-        while((check+1)!=self.identity_player):
-            self.diceRoll.place(x=-30,y=-30)
-            self.begin = self.client_socket.recv(1024)
-            self.loadbegin= pickle.loads(self.begin)
-            self.i = self.loadbegin[0]
-            self.move = int(self.loadbegin[2])
-            check = self.i%self.num_player
-            turn = (self.i-1)%self.num_player
-            self.position[turn] = self.diceMove(self.position[turn], turn)
-        self.diceRoll.place(x=200, y=560)
-
             
  
