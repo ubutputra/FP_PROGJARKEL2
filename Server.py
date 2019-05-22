@@ -2,6 +2,7 @@ import pickle
 import select
 import socket
 import sys
+from diceMove import dice
 
 from thread import *
 
@@ -22,13 +23,10 @@ list_of_clients=[]
 
 turnnow = 0
 jumlah_player = 0
-posisi_1 = 0
-posisi_2 = 0
-posisi_3 = 0
-posisi_4 = 0
+curr_player = 0
 roll = 0
-#keterangan ->turn sekarang,jumlah player, roll turn sekarang, posisi player 1, posisi player 2, posisi player 3, posisi player 4
-keterangan=[turnnow,jumlah_player,roll,posisi_1,posisi_2,posisi_3,posisi_4]
+#keterangan ->turn sekarang,jumlah player, roll turn sekarang, current player
+keterangan=[turnnow,jumlah_player,roll,curr_player]
 keterangandump=pickle.dumps(keterangan)
 
 #state A -> game belum mulai, state B -> game sudah mulai
@@ -40,24 +38,25 @@ def clientthread(conn,addr):
 		global turnnow
 		global jumlah_player
 		global roll
-		global posisi_1
-		global posisi_2
-		global posisi_3
-		global posisi_4
+		global curr_player
 		global keterangan
 		global keterangandump
 		try:
 			message=conn.recv(2048)
 			if message:
-				print message
 				if state == "A":
 					state = "B"
 					print "Game Mulai"
+					keterangan=[turnnow,jumlah_player,roll,curr_player]
+					keterangandump=pickle.dumps(keterangan)
+					broadcast(keterangandump,conn)
 				else:
-					roll=int(message)
+					curr_player=int(message)
+					print "PLAYER :" + str(curr_player)
+					roll = dice()
 					turnnow+=1
-					posisi_1+=roll
-					keterangan=[turnnow,jumlah_player,roll,posisi_1,posisi_2,posisi_3,posisi_4]
+					print "TURN = + " + str(turnnow)
+					keterangan=[turnnow,jumlah_player,roll,curr_player]
 					keterangandump=pickle.dumps(keterangan)
 					broadcast(keterangandump,conn)
 			else:
@@ -77,9 +76,9 @@ while True:
 	conn,addr = server.accept()
 	list_of_clients.append(conn)
 	jumlah_player +=1
-	keterangan=[turnnow,jumlah_player,roll,posisi_1,posisi_2,posisi_3,posisi_4]
-	keterangandump=pickle.dumps(keterangan)
-	conn.send(keterangandump)
+	# keterangan=[turnnow,jumlah_player,roll,posisi_1,posisi_2,posisi_3,posisi_4]
+	# keterangandump=pickle.dumps(keterangan)
+	conn.send(str(jumlah_player))
 	print addr[0] + "connected"
 	start_new_thread(clientthread,(conn,addr))
 

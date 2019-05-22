@@ -63,6 +63,7 @@ class Display(object):
         self.gambar.append(PhotoImage( file = "image3.gif"))
         self.gambar.append(PhotoImage( file = "image4.gif"))
         
+
         #CONNECTION
         self.server_address = ('127.0.0.1',8081)
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,6 +71,7 @@ class Display(object):
         self.identity_player = self.client_socket.recv(1024)
         print "Player ke " + self.identity_player
         self.identity_player = int(self.identity_player)
+        # self.state="PREPARING"
         
 
         #Drop Menu
@@ -82,7 +84,7 @@ class Display(object):
         # w.config(font=('calibri',(10)),bg='white',width=5)
         
         #Start Game
-        self.startGame = Button(self.canvas, text="Start Game", background='white', command = self.startGame, font=("Helvetica"))
+        self.startGame = Button(self.canvas, text="Enter Game", background='white', command = self.startGame, font=("Helvetica"))
         self.startGame.place(x=200, y=575)
 
 
@@ -90,7 +92,6 @@ class Display(object):
         self.diceRoll = Button(self.canvas, text="Roll",background='white', command = self.gamePlay, font=("Helvetica"))
         # testing = dice()
         # print "ROLL = " + str(testing)
-        self.client_socket.send("START")
         #keterangan ->turn sekarang,jumlah player, roll turn sekarang, current player
         self.begin = self.client_socket.recv(1024)
         self.loadbegin= pickle.loads(self.begin)
@@ -98,32 +99,31 @@ class Display(object):
         #print self.loadbegin[1]
         self.i = int(self.loadbegin[0])
         self.num_player = int(self.loadbegin[1])
+        print "Jumlah player = " + str(self.num_player)
         check = self.i%self.num_player
         print "CHECK = " + str(check)
+        print "PLAYER KE = " + str(self.identity_player)
         self.create_peice()
         self.startGame.place(x=-30, y=-30)
         while((check+1)!=self.identity_player):
             self.diceRoll.place(x=-30,y=-30)
             self.begin = self.client_socket.recv(1024)
             self.loadbegin= pickle.loads(self.begin)
-            self.i = self.loadbegin[0]
+            self.i = int(self.loadbegin[0])
             self.move = int(self.loadbegin[2])
-            print "MOVE = " + str(self.move)
-            print "MOVE = " + str(self.loadbegin[2])
             check = self.i%self.num_player
             turn = (self.i-1)%self.num_player
-            print "TURN = " +str(turn)
             self.position[turn] = self.diceMove(self.position[turn], turn)
+            print "GERAKANMU"
+        print "YEY"
         self.diceRoll.place(x=200, y=560)
-            
-
 
     def get_choice(self, value):
         self.num_player = value
 
 
     def diceMove(self, position, turn):
-        # move = dice()
+        #move = dice()
 
         #move = 1
         #Print Dice Value to screen
@@ -215,7 +215,6 @@ class Display(object):
 
 
     def gamePlay(self):
-        #keterangan ->turn sekarang,jumlah player, roll turn sekarang, current player
         self.client_socket.send(str(self.identity_player))
         self.begin = self.client_socket.recv(1024)
         self.loadbegin= pickle.loads(self.begin)
@@ -224,8 +223,6 @@ class Display(object):
         check = self.i%self.num_player
         turn = (self.i-1)%self.num_player
         self.position[turn] = self.diceMove(self.position[turn], turn)
-        print "CHECK = " + str(check)
-        print "TURN = " + str(self.loadbegin[0])
         if(self.block[self.turn] >= 50):
             self.diceRoll.place(x=-30, y=-30)
             print("Won", self.turn+1)
@@ -249,6 +246,5 @@ class Display(object):
             turn = (self.i-1)%self.num_player
             self.position[turn] = self.diceMove(self.position[turn], turn)
         self.diceRoll.place(x=200, y=560)
-
             
  
