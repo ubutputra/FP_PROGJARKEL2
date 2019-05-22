@@ -1,6 +1,7 @@
 import random
 from Tkinter import *
 from diceMove import dice
+from PIL import Image, ImageTk
 import time
 import socket
 import pickle
@@ -62,10 +63,15 @@ class Display(object):
         self.turn = 0
         self.identity_player = 0
         self.gambar=[]
-        self.gambar.append(PhotoImage( file = "image1.gif"))
-        self.gambar.append(PhotoImage( file = "image2.gif"))
-        self.gambar.append(PhotoImage( file = "image3.gif"))
-        self.gambar.append(PhotoImage( file = "image4.gif"))
+        image1=Image.open("image1.png").convert("RGBA")
+        image2=Image.open("image2.png").convert("RGBA")
+        image3=Image.open("image3.png").convert("RGBA")
+        image4=Image.open("image4.png").convert("RGBA")
+
+        self.gambar.append(ImageTk.PhotoImage(image1))
+        self.gambar.append(ImageTk.PhotoImage(image2))
+        self.gambar.append(ImageTk.PhotoImage(image3))
+        self.gambar.append(ImageTk.PhotoImage(image4))
         
         #CONNECTION
         self.server_address = ('127.0.0.1',8081)
