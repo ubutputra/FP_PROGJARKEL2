@@ -21,6 +21,10 @@ class MatchPosition():
             return 265+x, 325+y, 18
         elif(block == 33):
             return 865+x, 325+y, 12
+        elif(block == 38):
+            return 265+x, 325+y, 16
+        elif(block == 22):
+            return 65+x, 25+y, 41
         # elif(block == 17):
         #    return 425+x, 510+y, 4
         # elif(block == 19):
