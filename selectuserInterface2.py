@@ -5,6 +5,9 @@ from PIL import Image, ImageTk
 import time
 import socket
 import pickle
+import select
+import sys
+import msvcrt
 
 def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
@@ -83,6 +86,11 @@ class Display(object):
         self.identity_player = int(self.identity_player)
         # self.state="PREPARING"
         
+        self.sockets_list = [self.client_socket]
+        self.read_sockets,self.write_socket,self.error_socket = select.select(self.sockets_list,[],[],1)
+        if msvcrt.kbhit():
+            self.read_sockets.append(sys.stdin)
+
 
         #Drop Menu
         # OPTIONS = ["Players", "2", "3", "4"]
@@ -225,16 +233,41 @@ class Display(object):
 
 
     def gamePlay(self):
-        self.client_socket.send(str(self.identity_player))
-        self.begin = self.client_socket.recv(1024)
-        self.loadbegin= pickle.loads(self.begin)
-        self.i = int(self.loadbegin[0])
-        self.move = int(self.loadbegin[2])
-        check = self.i%self.num_player
-        turn = (self.i-1)%self.num_player
-        self.position[turn] = self.diceMove(self.position[turn], turn)
+        print "masuk gameplay"
+        if msvcrt.kbhit():
+            self.read_sockets.append(sys.stdin)
+        print self.read_sockets
+        print self.sockets_list
+        for socks in self.read_sockets:
+            print "masuk socks"
+            if socks == self.client_socket:
+                print "masuk kirim"
+                socks.send(str(self.identity_player))
+                self.diceRoll.place(x=200, y=560)  
+            else:
+                print "masuk terima"
+                self.begin = socks.recv(1024)
+                self.loadbegin= pickle.loads(self.begin)
+                self.i = int(self.loadbegin[0])
+                self.move = int(self.loadbegin[2])
+                check = self.i%self.num_player
+                turn = (self.i-1)%self.num_player
+                self.position[turn] = self.diceMove(self.position[turn], turn)
+                print "CHECK = " + str(check)
+                print "TURN = " + str(self.loadbegin[0])
+                if ((check+1)!=self.identity_player):
+                    self.diceRoll.place(x=-30,y=-30)
+                    self.begin = self.client_socket.recv(1024)
+                    self.loadbegin= pickle.loads(self.begin)
+                    self.i = self.loadbegin[0]
+                    self.move = int(self.loadbegin[2])
+                    check = self.i%self.num_player
+                    turn = (self.i-1)%self.num_player
+                    self.position[turn] = self.diceMove(self.position[turn], turn)
+        #keterangan ->turn sekarang,jumlah player, roll turn sekarang, current player
         if(self.block[self.turn] >= 50):
             self.diceRoll.place(x=-30, y=-30)
+            self.update()
             print("Won", self.turn+1)
             top = Toplevel()
             top.title("Snake and Ladder")
@@ -246,15 +279,3 @@ class Display(object):
             button.pack()
         if(self.num_player!=1):
             check=1000
-        while((check+1)!=self.identity_player):
-            self.diceRoll.place(x=-30,y=-30)
-            self.begin = self.client_socket.recv(1024)
-            self.loadbegin= pickle.loads(self.begin)
-            self.i = self.loadbegin[0]
-            self.move = int(self.loadbegin[2])
-            check = self.i%self.num_player
-            turn = (self.i-1)%self.num_player
-            self.position[turn] = self.diceMove(self.position[turn], turn)
-        self.diceRoll.place(x=200, y=560)
-            
- 
