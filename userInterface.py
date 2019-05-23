@@ -1,6 +1,6 @@
 import random
 from Tkinter import *
-from diceMove import dice
+from diceMove import *
 from PIL import Image, ImageTk
 import time
 import socket
@@ -151,6 +151,9 @@ class Display(object):
 
     def startGame(self):
         self.diceRoll = Button(self.canvas, text="Roll",background='white', command = self.gamePlay, font=("Helvetica"))
+        self.primeRoll = Button(self.canvas, text="Prime", background="white", command = self.primeRolling, font=("Helvetica"))
+        self.notPrimeRoll = Button(self.canvas, text="Not Prime",  background="white", command = self.notPrimeRolling, font=("Helvetica"))
+        self.notUsedPrimeRoll = Button(self.canvas, text="Cancel",  background="white", command = self.notUsedPrimeRolling, font=("Helvetica"))
         # testing = dice()
         # print "ROLL = " + str(testing)
         self.viewstat = Label(self.canvas, text="Player Status",background='white', font=("Helvetica"))
@@ -181,6 +184,9 @@ class Display(object):
             print "TURN = " +str(turn)
             self.position[turn] = self.diceMove(self.position[turn], turn)
         self.diceRoll.place(x=200, y=560)
+        self.primeRoll.place(x=250, y=560)
+        self.notPrimeRoll.place(x=300, y=560)
+        self.notUsedPrimeRoll.place(x=275, y=610)
         self.viewstat.place(x=100, y=560)
 
 
@@ -292,10 +298,24 @@ class Display(object):
             self.block.append(1)
             self.y += 20
 
+    def primeRolling(self):
+        self.primeRolla = 1
+    
+    def notPrimeRolling(self):
+        self.primeRolla = 2
+    
+    def notUsedPrimeRolling(self):
+        self.primeRolla = 0
+
+
 
     def gamePlay(self):
         #keterangan ->turn sekarang,jumlah player, roll turn sekarang, current player
-        self.client_socket.send(str(self.identity_player))
+        print "PlayPlay " + str(self.identity_player)
+        data = [self.identity_player,self.primeRolla]
+        datadump = pickle.dumps(data)
+        self.client_socket.send(datadump)
+        self.primeRolla = 0
         self.begin = self.client_socket.recv(1024)
         self.loadbegin= pickle.loads(self.begin)
         self.i = int(self.loadbegin[0])

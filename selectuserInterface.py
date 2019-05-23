@@ -1,6 +1,6 @@
 import random
 from Tkinter import *
-from diceMove import dice
+from diceMove import *
 from PIL import Image, ImageTk
 import time
 import socket

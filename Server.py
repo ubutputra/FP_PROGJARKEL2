@@ -2,7 +2,7 @@ import pickle
 import select
 import socket
 import sys
-from diceMove import dice
+from diceMove import *
 
 from thread import *
 
@@ -51,9 +51,17 @@ def clientthread(conn,addr):
 					keterangandump=pickle.dumps(keterangan)
 					broadcast(keterangandump,conn)
 				else:
-					curr_player=int(message)
+					messageload = pickle.loads(message)
+					curr_player=int(messageload[0])
+					prime_power = int(messageload[1])
 					print "PLAYER :" + str(curr_player)
-					roll = dice()
+					print "PRIME POWER: " + str(prime_power)
+					if prime_power == 1:
+						roll = dicePrime()
+					elif prime_power == 2:
+						roll = diceNotPrime()
+					elif prime_power == 0:
+						roll = dice()
 					turnnow+=1
 					print "TURN = + " + str(turnnow)
 					keterangan=[turnnow,jumlah_player,roll,curr_player]
