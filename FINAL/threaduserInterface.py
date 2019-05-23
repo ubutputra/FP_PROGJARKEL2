@@ -323,11 +323,9 @@ class Display(object):
 
     def primeRolling(self):
         self.primeRolla = 1
-        self.primecounter-=1
     
     def notPrimeRolling(self):
         self.primeRolla = 2
-        self.notprimecounter-=1
     
     def notUsedPrimeRolling(self):
         self.primeRolla = 0
@@ -370,6 +368,10 @@ class Display(object):
             else:
                 data = [self.identity_player,self.primeRolla]
                 datadump = pickle.dumps(data)
+                if self.primeRolla == 1 and self.primecounter > 0:
+                    self.primecounter -= 1
+                elif self.primeRolla == 2 and self.notprimecounter > 0:
+                    self.notprimecounter -= 1
                 self.client_socket.send(datadump)
                 time.sleep(0.5)
                 self.i = int(self.loadbegin[0])
