@@ -1,6 +1,6 @@
 import random
 from Tkinter import *
-from diceMove import dice
+from diceMove import *
 from PIL import Image, ImageTk
 import time
 import sys
@@ -126,6 +126,11 @@ class Display(object):
         self.begin= ''
         self.loadbegin=[]
 
+        self.primeRolla = 0
+
+        self.primecounter=3
+        self.notprimecounter=3
+
         self.gambar.append(ImageTk.PhotoImage(image1))
         self.gambar.append(ImageTk.PhotoImage(image2))
         self.gambar.append(ImageTk.PhotoImage(image3))
@@ -159,6 +164,10 @@ class Display(object):
 
     def startGame(self):
         self.diceRoll = Button(self.canvas, text="Roll",background='white', command = self.gamePlay, font=("Helvetica"))
+        self.primeRoll = Button(self.canvas, text="Prime", background="white", command = self.primeRolling, font=("Helvetica"))
+        self.notPrimeRoll = Button(self.canvas, text="Not Prime",  background="white", command = self.notPrimeRolling, font=("Helvetica"))
+        self.notUsedPrimeRoll = Button(self.canvas, text="Cancel Special Roll",  background="white", command = self.notUsedPrimeRolling, font=("Helvetica"))
+        
         # testing = dice()
         # print "ROLL = " + str(testing)
         self.viewstat = Label(self.canvas, text="Player Status",background='white', font=("Helvetica"))
@@ -200,6 +209,10 @@ class Display(object):
         else:
             self.diceRoll.place(x=200,y=560)
         self.viewstat.place(x=100, y=560)
+
+        self.primeRoll.place(x=250, y=560)
+        self.notPrimeRoll.place(x=300, y=560)
+        self.notUsedPrimeRoll.place(x=350, y=610)
         self.stat_value.place(x=400,y=560)
 
 
@@ -222,11 +235,11 @@ class Display(object):
         stat_value.pack()
         stat_value.place(x=105, y=605)
         
-        turn_info = 'Player ' + str(turn+1)
-        turn_value = Label(self.canvas, text=turn_info,
-                           background='white', font=("Helvetica", 20))
-        turn_value.pack()
-        turn_value.place(x=265, y=585)
+        # turn_info = 'Player ' + str(turn+1)
+        # turn_value = Label(self.canvas, text=turn_info,
+        #                    background='white', font=("Helvetica", 20))
+        # turn_value.pack()
+        # turn_value.place(x=265, y=585)
         
         self.x, self.y = position[0], position[1]
         if(self.move+self.block[turn] > 50):
@@ -284,10 +297,11 @@ class Display(object):
         if checktrap==1:
             self.status[turn] -= 10
             if self.status[turn] <= 0:
-                self.status = 50
+                self.status[turn] = 50
                 self.x = 55
                 self.y = 410
                 self.block[turn] = 1
+                self.m[turn]=1
                 self.canvas.delete(self.player[turn])
                 #self.player[turn] = self.canvas.create_circle(self.x, self.y, 15, fill=self.color[turn], outline="")
                 self.player[turn]=self.canvas.create_image(self.x,self.y,anchor=CENTER, image = self.gambar[turn])
@@ -306,6 +320,17 @@ class Display(object):
             self.m.append(1)
             self.block.append(1)
             self.y += 20
+
+    def primeRolling(self):
+        self.primeRolla = 1
+        self.primecounter-=1
+    
+    def notPrimeRolling(self):
+        self.primeRolla = 2
+        self.notprimecounter-=1
+    
+    def notUsedPrimeRolling(self):
+        self.primeRolla = 0
 
 
     def gamePlay(self):
@@ -343,7 +368,9 @@ class Display(object):
                     button = Button(top, text="Dismiss", command=top.destroy)
                     button.pack()
             else:
-                self.client_socket.send(str(self.identity_player))
+                data = [self.identity_player,self.primeRolla]
+                datadump = pickle.dumps(data)
+                self.client_socket.send(datadump)
                 time.sleep(0.5)
                 self.i = int(self.loadbegin[0])
                 self.move = int(self.loadbegin[2])
@@ -361,6 +388,13 @@ class Display(object):
                     msg.pack()
                     button = Button(top, text="Dismiss", command=top.destroy)
                     button.pack()
+                if self.primecounter<=0:
+                    self.primeRoll.place(x=-30,y=-30)
+                if self.notprimecounter<=0:
+                    self.notPrimeRoll.place(x=-30, y=-30)
+                if self.primecounter<=0 and self.notprimecounter<=0:
+                    self.notPrimeRolling
+
     def cmdloop(self):
         while 1:
             sys.stdout.flush()

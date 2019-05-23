@@ -186,7 +186,7 @@ class Display(object):
         self.diceRoll.place(x=200, y=560)
         self.primeRoll.place(x=250, y=560)
         self.notPrimeRoll.place(x=300, y=560)
-        self.notUsedPrimeRoll.place(x=275, y=610)
+        self.notUsedPrimeRoll.place(x=350, y=610)
         self.viewstat.place(x=100, y=560)
 
 
