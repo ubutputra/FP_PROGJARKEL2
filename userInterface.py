@@ -11,30 +11,30 @@ def _create_circle(self, x, y, r, **kwargs):
 Canvas.create_circle = _create_circle
 
 class MatchPosition():
-    # def find_trap(self, block, turn, position):
-    #     x = 35*(turn>=3)
-    #     y = (turn%3)*35
+    def find_trap(self, block, turn, position):
+        x = 35*(turn>=3)
+        y = (turn%3)*35
 
-    #     if(block == 4):
-    #         return 1
-    #     elif(block == 7):
-    #         return 1
-    #     elif(block == 15):
-    #         return 1
-    #     elif(block == 19):
-    #         return 1
-    #     elif(block == 24):
-    #         return 1
-    #     elif(block == 30):
-    #         return 1
-    #     elif(block == 35):
-    #         return 1
-    #     elif(block == 39):
-    #         return 1
-    #     elif(block == 46):
-    #         return 1
-    #     else:
-    #         return 0
+        if(block == 4):
+            return 1
+        elif(block == 7):
+            return 1
+        elif(block == 15):
+            return 1
+        elif(block == 19):
+            return 1
+        elif(block == 24):
+            return 1
+        elif(block == 30):
+            return 1
+        elif(block == 35):
+            return 1
+        elif(block == 39):
+            return 1
+        elif(block == 46):
+            return 1
+        else:
+            return 0
 
     def find_snake_or_ladder(self, block, turn, position):
         x = 35*(turn>=3)
