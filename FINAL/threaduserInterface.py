@@ -373,6 +373,7 @@ class Display(object):
                 elif self.primeRolla == 2 and self.notprimecounter > 0:
                     self.notprimecounter -= 1
                 self.client_socket.send(datadump)
+                self.primeRolla=0
                 time.sleep(0.5)
                 self.i = int(self.loadbegin[0])
                 self.move = int(self.loadbegin[2])
