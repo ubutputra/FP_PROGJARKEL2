@@ -388,6 +388,15 @@ class Display(object):
                     msg.pack()
                     button = Button(top, text="Dismiss", command=top.destroy)
                     button.pack()
+                primecount = 'Prime: ' + str(self.primecounter)
+                notprimecount = 'Not Prime: ' + str(self.notprimecounter)
+                primecounterlabel = Label(self.canvas, text=primecount,background='white', font=("Helvetica"))
+                notprimecounterlabel = Label(self.canvas, text=notprimecount,background='white', font=("Helvetica"))
+                primecounterlabel.pack()
+                primecounterlabel.place(x=100, y=660)
+                notprimecounterlabel.pack()
+                notprimecounterlabel.place(x=205, y=660)
+
                 if self.primecounter<=0:
                     self.primeRoll.place(x=-30,y=-30)
                 if self.notprimecounter<=0:
