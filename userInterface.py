@@ -11,21 +11,73 @@ def _create_circle(self, x, y, r, **kwargs):
 Canvas.create_circle = _create_circle
 
 class MatchPosition():
+    def find_trap(self, block, turn, position):
+        x = 35*(turn>=3)
+        y = (turn%3)*35
+
+        if(block == 4):
+            return 1
+        elif(block == 7):
+            return 1
+        elif(block == 15):
+            return 1
+        elif(block == 19):
+            return 1
+        elif(block == 24):
+            return 1
+        elif(block == 30):
+            return 1
+        elif(block == 35):
+            return 1
+        elif(block == 39):
+            return 1
+        elif(block == 46):
+            return 1
+        else:
+            return 0
+
     def find_snake_or_ladder(self, block, turn, position):
         x = 35*(turn>=3)
         y = (turn%3)*35
         if(block == 17):
-           return 455+x, 125+y, 36
+           return 455+x, 125+y, 36,0
         elif(block == 27):
-            return 655+x, 25+y, 47
+            return 655+x, 25+y, 47,0
         elif(block == 44):
-            return 265+x, 325+y, 18
+            return 265+x, 325+y, 18,0
         elif(block == 33):
-            return 865+x, 325+y, 12
+            return 865+x, 325+y, 12,0
         elif(block == 38):
-            return 265+x, 325+y, 16
+            return 265+x, 325+y, 16,0
         elif(block == 22):
-            return 65+x, 25+y, 41
+            return 65+x, 25+y, 41,0
+
+        elif(block == 4):
+            return position[0], position[1], block,1
+        elif(block == 7):
+            return position[0], position[1], block,1
+        elif(block == 15):
+            return position[0], position[1], block,1
+        elif(block == 19):
+            return position[0], position[1], block,1
+        elif(block == 24):
+            return position[0], position[1], block,1
+        elif(block == 30):
+            return position[0], position[1], block,1
+        elif(block == 35):
+            return position[0], position[1], block,1
+        elif(block == 39):
+            return position[0], position[1], block,1
+        elif(block == 46):
+            return position[0], position[1], block,1
+        else:
+            return position[0], position[1], block,0
+       
+          
+       
+
+
+
         # elif(block == 17):
         #    return 425+x, 510+y, 4
         # elif(block == 19):
@@ -34,8 +86,8 @@ class MatchPosition():
         #    return 425+x, 390+y, 9
         # elif(block == 27):
         #    return 65+x, 510+y, 1
-        else:
-            return position[0], position[1], block
+        # else:
+        #     return position[0], position[1], block
         
 
 class Display(object):
@@ -60,6 +112,7 @@ class Display(object):
         self.i = 0
         self.block=[]
         self.move = 1
+        self.status = 20 #trap status
         self.turn = 0
         self.identity_player = 0
         self.gambar=[]
@@ -100,6 +153,8 @@ class Display(object):
         self.diceRoll = Button(self.canvas, text="Roll",background='white', command = self.gamePlay, font=("Helvetica"))
         # testing = dice()
         # print "ROLL = " + str(testing)
+        self.viewstat = Label(self.canvas, text="Player Status",background='white', font=("Helvetica"))
+
         self.client_socket.send("START")
         #keterangan ->turn sekarang,jumlah player, roll turn sekarang, current player
         self.begin = self.client_socket.recv(1024)
@@ -114,6 +169,7 @@ class Display(object):
         self.startGame.place(x=-30, y=-30)
         while((check+1)!=self.identity_player):
             self.diceRoll.place(x=-30,y=-30)
+            self.viewstat.place(x=-90,y=-30)
             self.begin = self.client_socket.recv(1024)
             self.loadbegin= pickle.loads(self.begin)
             self.i = self.loadbegin[0]
@@ -125,7 +181,7 @@ class Display(object):
             print "TURN = " +str(turn)
             self.position[turn] = self.diceMove(self.position[turn], turn)
         self.diceRoll.place(x=200, y=560)
-            
+        self.viewstat.place(x=100, y=560)
 
 
     def get_choice(self, value):
@@ -141,6 +197,11 @@ class Display(object):
                            background='white', font=("Helvetica", 25))
         dice_value.pack()
         dice_value.place(x=205, y=605)
+
+        stat_value = Label(self.canvas, text=str(self.status),
+                           background='white', font=("Helvetica", 25))
+        stat_value.pack()
+        stat_value.place(x=105, y=605)
         
         turn_info = 'Player ' + str(turn+1)
         turn_value = Label(self.canvas, text=turn_info,
@@ -200,8 +261,16 @@ class Display(object):
         print(self.x, self.y, self.block[turn])
         if self.block[turn]==44:
             self.m[turn]= -1
-        self.x, self.y, self.block[turn] = MatchPosition().find_snake_or_ladder(self.block[turn], turn, [self.x, self.y])
-        
+        self.x, self.y, self.block[turn],checktrap= MatchPosition().find_snake_or_ladder(self.block[turn], turn, [self.x, self.y])
+        if checktrap==1:
+            self.status -= 10
+            if self.status <= 0:
+                self.status = 50
+                self.x = 55
+                self.y = 410
+                self.block[turn] = 1
+            
+
         # if(any(self.y == ai for ai in [390, 425, 460, 150, 185, 220])):
         #     print "wat "+str(ai)
         #     self.m[turn] = -1
@@ -262,3 +331,8 @@ class Display(object):
 
             
  
+    # def trap_status(self,poin):
+    #     status_value= Label(self.canvas, text=str(self.status),
+    #                        background='white', font=("Helvetica", 25))
+    #     status_value.pack()
+    #     status_value.place(x=255, y=605)
